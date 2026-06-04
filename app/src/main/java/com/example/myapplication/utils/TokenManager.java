@@ -15,7 +15,11 @@ public class TokenManager {
     }
 
     public String getToken() {
-        return prefs.getString("USER_TOKEN", null);
+
+        //return prefs.getString("USER_TOKEN", null);
+
+        // Copy nguyên chuỗi eyJhbGci... dán vào trong dấu ngoặc kép này
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjdXN0b21lckBlbWFpbC5jb20iLCJpZCI6NX0...";
     }
 
     public void clearToken() {

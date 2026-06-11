@@ -13,7 +13,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
-    // Dùng 10.0.2.2 để máy ảo kết nối được với Spring Boot localhost của máy tính
+    // 10.0.2.2 là địa chỉ IP đặc biệt để máy ảo Android truy cập localhost của máy tính
     private static final String BASE_URL = "http://10.0.2.2:8080/api/";
     private static Retrofit retrofit = null;
 

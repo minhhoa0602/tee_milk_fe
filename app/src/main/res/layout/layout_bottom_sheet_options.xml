@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_bottom_sheet_white"> <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@id/layoutBottomBar"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="16dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TÙY CHỌN SẢN PHẨM" android:textSize="18sp" android:textStyle="bold" android:textColor="#5D4037" android:layout_centerInParent="true"/>
+            <ImageView android:id="@+id/btnClose" android:layout_width="24dp" android:layout_height="24dp" android:src="@android:drawable/ic_menu_close_clear_cancel" android:layout_alignParentEnd="true" app:tint="#A0A0A0"/>
+        </RelativeLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginBottom="24dp">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivProductThumb"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/RoundedImageView"
+                android:src="@android:drawable/ic_menu_gallery"/>
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginStart="16dp">
+                <TextView android:id="@+id/tvProductName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Đang tải..." android:textSize="16sp" android:textColor="#000" android:textStyle="bold"/>
+                <TextView android:id="@+id/tvBasePrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0đ" android:textSize="16sp" android:textColor="#A0A0A0" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="KÍCH THƯỚC (SIZE)" android:textStyle="bold" android:textColor="#5D4037" android:layout_marginBottom="8dp"/>
+        <RadioGroup android:id="@+id/rgSizes" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MỨC ĐƯỜNG" android:textStyle="bold" android:textColor="#5D4037" android:layout_marginBottom="8dp"/>
+        <RadioGroup android:id="@+id/rgSugar" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MỨC ĐÁ" android:textStyle="bold" android:textColor="#5D4037" android:layout_marginBottom="8dp"/>
+        <RadioGroup android:id="@+id/rgIce" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="TOPPING" android:textStyle="bold" android:textColor="#5D4037" android:layout_marginBottom="8dp"/>
+        <LinearLayout android:id="@+id/llToppings" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="32dp"/>
+    </LinearLayout>
+</ScrollView>
+
+    <LinearLayout
+        android:id="@+id/layoutBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="#FFF"
+        android:elevation="8dp"
+        android:gravity="center_vertical">
+
+        <Button android:id="@+id/btnMinus" android:layout_width="36dp" android:layout_height="36dp" android:text="-" android:backgroundTint="#F5F5F5" android:textColor="#000" android:padding="0dp"/>
+        <TextView android:id="@+id/tvQuantity" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1" android:textSize="18sp" android:textStyle="bold" android:textColor="#000" android:layout_marginHorizontal="16dp"/>
+        <Button android:id="@+id/btnPlus" android:layout_width="36dp" android:layout_height="36dp" android:text="+" android:backgroundTint="#F5F5F5" android:textColor="#000" android:padding="0dp"/>
+
+        <Button
+            android:id="@+id/btnAddToCart"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="56dp"
+            android:layout_marginStart="16dp"
+            android:text="THÊM VÀO GIỎ (0đ)"
+            android:backgroundTint="#5D4037"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</RelativeLayout>

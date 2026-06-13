@@ -33,10 +33,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
     public void setOrderList(List<Order> newList) {
-        if (newList == null) newList = new ArrayList<>();
+        final List<Order> safeNew = newList != null ? newList : new ArrayList<>();
         DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             final List<Order> old = orderList;
-            final List<Order> next = newList;
+            final List<Order> next = safeNew;
 
             @Override public int getOldListSize() { return old.size(); }
             @Override public int getNewListSize() { return next.size(); }
@@ -59,7 +59,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
                 return a == null ? b == null : a.equals(b);
             }
         });
-        orderList = newList;
+        orderList = safeNew;
         diff.dispatchUpdatesTo(this);
     }
 

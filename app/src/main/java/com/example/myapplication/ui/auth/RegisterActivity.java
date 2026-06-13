@@ -13,7 +13,6 @@ import com.example.myapplication.api.ApiService;
 import com.example.myapplication.api.RetrofitClient;
 import com.example.myapplication.model.BaseResponse;
 import com.example.myapplication.model.RegisterRequest;
-import com.example.myapplication.model.UserProfile;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,9 +57,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         RegisterRequest request = new RegisterRequest(email, password, fullName);
 
-        apiService.register(request).enqueue(new Callback<BaseResponse<UserProfile>>() {
+        apiService.register(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
-            public void onResponse(Call<BaseResponse<UserProfile>> call, Response<BaseResponse<UserProfile>> response) {
+            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(RegisterActivity.this, "Đăng ký thành công! Mời bạn đăng nhập", Toast.LENGTH_LONG).show();
                     finish(); // Trở về màn hình Login
@@ -70,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<UserProfile>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
                 Toast.makeText(RegisterActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

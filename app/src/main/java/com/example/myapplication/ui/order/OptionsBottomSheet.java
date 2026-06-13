@@ -298,6 +298,7 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
     }
 
     private String formatMoney(BigDecimal amount) {
-        return new DecimalFormat("#,###đ").format(amount);
+        if (amount == null) return "0đ";
+        return new DecimalFormat("#,###").format(amount.longValue()) + "đ";
     }
 }

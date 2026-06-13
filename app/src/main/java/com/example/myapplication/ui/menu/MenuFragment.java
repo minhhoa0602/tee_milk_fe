@@ -61,7 +61,6 @@ public class MenuFragment extends Fragment {
     private List<CategoryResponse> categories = new ArrayList<>();
     private Integer selectedCategoryId = null; // null = Tất cả
     private Integer selectedMinRating = null;
-    private boolean filterVisible = false;
 
     // Sort options
     private static final String[] SORT_LABELS = {"Phổ biến nhất", "Giá: Thấp đến cao", "Giá: Cao đến thấp"};
@@ -97,13 +96,14 @@ public class MenuFragment extends Fragment {
         setupSort();
         setupRatingFilter();
         setupSearchBar();
-        setupFilterToggle(view);
 
-        view.findViewById(R.id.btnApplyFilter).setOnClickListener(v -> {
-            cardFilter.setVisibility(View.GONE);
-            filterVisible = false;
-            loadProducts();
+        // Nút Lọc: toggle show/hide bộ lọc
+        view.findViewById(R.id.btnFilter).setOnClickListener(v -> {
+            boolean visible = cardFilter.getVisibility() == View.VISIBLE;
+            cardFilter.setVisibility(visible ? View.GONE : View.VISIBLE);
         });
+
+        view.findViewById(R.id.btnApplyFilter).setOnClickListener(v -> loadProducts());
 
         tvClearFilter.setOnClickListener(v -> clearFilter());
 
@@ -201,13 +201,6 @@ public class MenuFragment extends Fragment {
                 searchHandler.postDelayed(searchRunnable, 400);
             }
             @Override public void afterTextChanged(Editable s) {}
-        });
-    }
-
-    private void setupFilterToggle(View root) {
-        root.findViewById(R.id.btnFilter).setOnClickListener(v -> {
-            filterVisible = !filterVisible;
-            cardFilter.setVisibility(filterVisible ? View.VISIBLE : View.GONE);
         });
     }
 

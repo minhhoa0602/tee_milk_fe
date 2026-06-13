@@ -65,7 +65,6 @@
         android:paddingHorizontal="16dp"
         android:paddingBottom="14dp">
 
-        <!-- Search box -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="46dp"
@@ -98,7 +97,6 @@
 
         </LinearLayout>
 
-        <!-- Lọc button -->
         <LinearLayout
             android:id="@+id/btnFilter"
             android:layout_width="wrap_content"
@@ -133,7 +131,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:paddingBottom="10dp">
+        android:paddingBottom="12dp">
 
         <LinearLayout
             android:id="@+id/llCategories"
@@ -145,16 +143,16 @@
 
     </HorizontalScrollView>
 
-    <!-- ── FILTER PANEL ── -->
+    <!-- ── BỘ LỌC (luôn hiện) ── -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cardFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="10dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:cardCornerRadius="14dp"
-        app:cardElevation="6dp"
+        app:cardElevation="4dp"
         app:cardBackgroundColor="#FFFFFF">
 
         <LinearLayout
@@ -163,13 +161,13 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Header: BỘ LỌC + Xóa lọc -->
+            <!-- BỘ LỌC | Xóa lọc -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="14dp">
+                android:layout_marginBottom="12dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -192,7 +190,7 @@
 
             </LinearLayout>
 
-            <!-- Price label -->
+            <!-- Khoảng giá -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -201,7 +199,6 @@
                 android:textSize="13sp"
                 android:layout_marginBottom="8dp" />
 
-            <!-- Min - Max price -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -245,13 +242,12 @@
 
             </LinearLayout>
 
-            <!-- Sort + Rating -->
+            <!-- Sắp xếp + Đánh giá -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Sort -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -275,7 +271,6 @@
 
                 </LinearLayout>
 
-                <!-- Rating -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -291,6 +286,7 @@
                         android:textSize="13sp"
                         android:layout_marginBottom="6dp" />
 
+                    <!-- Rating chips: ★1 ★2 ★3 ★4 ★5 -->
                     <LinearLayout
                         android:id="@+id/llRatingFilter"
                         android:layout_width="match_parent"
@@ -302,12 +298,12 @@
 
             </LinearLayout>
 
-            <!-- Apply -->
+            <!-- Áp dụng -->
             <Button
                 android:id="@+id/btnApplyFilter"
                 android:layout_width="match_parent"
                 android:layout_height="46dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="14dp"
                 android:text="Áp dụng"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
@@ -319,7 +315,7 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ── PRODUCT COUNT ── -->
+    <!-- ── SỐ LƯỢNG SP ── -->
     <TextView
         android:id="@+id/tvProductCount"
         android:layout_width="wrap_content"
@@ -330,7 +326,7 @@
         android:textSize="13sp"
         android:text="Đang tải..." />
 
-    <!-- ── PRODUCT LIST ── -->
+    <!-- ── DANH SÁCH SP ── -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProducts"
         android:layout_width="match_parent"

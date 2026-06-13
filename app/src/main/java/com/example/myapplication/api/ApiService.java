@@ -3,9 +3,12 @@ package com.example.myapplication.api;
 import com.example.myapplication.model.Address;
 import com.example.myapplication.model.AddressRequest;
 import com.example.myapplication.model.BaseResponse;
+import com.example.myapplication.model.CartRequest;
 import com.example.myapplication.model.LoginRequest;
 import com.example.myapplication.model.LoginResponse;
 import com.example.myapplication.model.Order;
+import com.example.myapplication.model.ProductDetail;
+import com.example.myapplication.model.ProductOptions;
 import com.example.myapplication.model.RegisterRequest;
 import com.example.myapplication.model.ReviewRequest;
 import com.example.myapplication.model.UpdateProfileRequest;
@@ -52,4 +55,15 @@ public interface ApiService {
 
     @POST("reviews")
     Call<BaseResponse<Void>> postReview(@Body ReviewRequest reviewRequest);
+
+    // Product detail
+    @GET("products/{id}")
+    Call<BaseResponse<ProductDetail>> getProductDetail(@Path("id") int productId);
+
+    @GET("products/{id}/options")
+    Call<BaseResponse<ProductOptions>> getProductOptions(@Path("id") int productId);
+
+    // Cart
+    @POST("cart/add")
+    Call<BaseResponse<Void>> addToCart(@Body CartRequest request);
 }

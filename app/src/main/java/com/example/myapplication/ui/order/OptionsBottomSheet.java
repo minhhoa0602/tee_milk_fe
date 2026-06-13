@@ -100,6 +100,10 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
 
         btnClose.setOnClickListener(view -> dismiss());
 
+        // Disable nút đến khi options load xong
+        btnAddToCart.setEnabled(false);
+        btnAddToCart.setText("Đang tải...");
+
         // Gọi API
         fetchData();
 
@@ -142,10 +146,14 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
                 .error(android.R.drawable.ic_menu_gallery)
                 .into(ivProductThumb);
 
+        // Enable nút sau khi data đã có
+        btnAddToCart.setEnabled(true);
+
         // 2. Render Sizes (Tích sẵn Size cũ)
         rgSizes.removeAllViews();
-        for (int i = 0; i < apiData.getSizes().size(); i++) {
-            Size size = apiData.getSizes().get(i);
+        List<Size> sizes = apiData.getSizes() != null ? apiData.getSizes() : new ArrayList<>();
+        for (int i = 0; i < sizes.size(); i++) {
+            Size size = sizes.get(i);
             RadioButton rb = new RadioButton(getContext());
             String label = "[" + size.getName() + "] (+" + formatMoney(size.getPriceAdd()) + ")";
             rb.setText(label);
@@ -153,7 +161,8 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
             rgSizes.addView(rb);
 
             // LOGIC TỰ ĐỘNG TICK SIZE
-            if (isEditMode && editItemData.getProductSize().equals(size.getName())) {
+            if (isEditMode && editItemData.getProductSize() != null
+                    && editItemData.getProductSize().equals(size.getName())) {
                 rb.setChecked(true); selectedSize = size;
             } else if (!isEditMode && i == 0) {
                 rb.setChecked(true); selectedSize = size;
@@ -232,6 +241,13 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void callAddToCartApi() {
+        // Validate: có sizes nhưng chưa chọn
+        if (selectedSize == null && apiData != null
+                && apiData.getSizes() != null && !apiData.getSizes().isEmpty()) {
+            Toast.makeText(getContext(), "Vui lòng chọn kích thước", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         List<Integer> toppingIds = new ArrayList<>();
         for(Map.Entry<Integer, Boolean> entry : selectedToppings.entrySet()){
             if(entry.getValue()) toppingIds.add(entry.getKey());

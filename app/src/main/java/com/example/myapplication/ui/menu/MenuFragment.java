@@ -204,6 +204,25 @@ public class MenuFragment extends Fragment {
         });
     }
 
+    private List<CategoryResponse> buildFallbackCategories() {
+        String[][] data = {
+                {"1", "Trà sữa"},
+                {"2", "Trà trái cây"},
+                {"3", "Trà nguyên lá"},
+                {"4", "Đá xay"},
+                {"5", "Cà phê"},
+                {"6", "Nước ép"},
+        };
+        List<CategoryResponse> list = new ArrayList<>();
+        for (String[] d : data) {
+            CategoryResponse c = new CategoryResponse();
+            c.setId(Integer.parseInt(d[0]));
+            c.setName(d[1]);
+            list.add(c);
+        }
+        return list;
+    }
+
     private void loadCategories() {
         CategoryApiService api = RetrofitClient.getInstance(requireContext())
                 .create(CategoryApiService.class);
@@ -214,15 +233,18 @@ public class MenuFragment extends Fragment {
                 if (!isAdded()) return;
                 categories.clear();
 
-                // "Tất cả" item
                 CategoryResponse all = new CategoryResponse();
                 all.setId(null);
                 all.setName("Tất cả");
                 categories.add(all);
 
                 if (response.isSuccessful() && response.body() != null
-                        && response.body().getData() != null) {
+                        && response.body().getData() != null
+                        && !response.body().getData().isEmpty()) {
                     categories.addAll(response.body().getData());
+                } else {
+                    // API không có data → dùng fallback
+                    categories.addAll(buildFallbackCategories());
                 }
                 buildCategoryChips();
                 loadProducts();
@@ -232,10 +254,12 @@ public class MenuFragment extends Fragment {
             public void onFailure(@NonNull Call<BaseResponse<List<CategoryResponse>>> call,
                                   @NonNull Throwable t) {
                 if (!isAdded()) return;
+                categories.clear();
                 CategoryResponse all = new CategoryResponse();
                 all.setId(null);
                 all.setName("Tất cả");
                 categories.add(all);
+                categories.addAll(buildFallbackCategories());
                 buildCategoryChips();
                 loadProducts();
             }
@@ -244,11 +268,14 @@ public class MenuFragment extends Fragment {
 
     private void buildCategoryChips() {
         llCategories.removeAllViews();
-        String[] emojis = {"🧋", "🥛", "🍊", "🌿", "🧊", "🫧", "☕", "🍵"};
+        // index 0 dùng cho "Tất cả", từ index 1 trở đi là real categories
+        String[] categoryEmojis = {"🧋", "🥛", "🍊", "🌿", "🧊", "🫧", "☕", "🍵", "🫖", "🍓", "🍋", "🥝"};
 
         for (int i = 0; i < categories.size(); i++) {
             CategoryResponse cat = categories.get(i);
-            String emoji = i < emojis.length ? emojis[i] : "☕";
+            // i==0 là "Tất cả" → icon "🍹", các danh mục thực từ i=1
+            String emoji = (i == 0) ? "🍹"
+                    : (i - 1 < categoryEmojis.length ? categoryEmojis[i - 1] : "☕");
 
             View chipView = LayoutInflater.from(getContext())
                     .inflate(R.layout.item_category_tab, llCategories, false);

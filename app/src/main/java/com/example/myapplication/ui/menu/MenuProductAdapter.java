@@ -68,12 +68,14 @@ public class MenuProductAdapter extends RecyclerView.Adapter<MenuProductAdapter.
         int sold = p.getSoldCount() != null ? p.getSoldCount() : 0;
         h.tvSoldCount.setText("Đã bán " + sold);
 
-        // Image
+        // Image — bo tròn góc 10dp theo bg_product_image
         Glide.with(h.ivImage.getContext())
                 .load(p.getImageUrl())
-                .placeholder(R.drawable.ic_nav_menu)
-                .error(R.drawable.ic_nav_menu)
+                .placeholder(R.drawable.bg_product_image)
+                .error(R.drawable.bg_product_image)
                 .centerCrop()
+                .transform(new com.bumptech.glide.load.resource.bitmap.RoundedCorners(
+                        (int) (10 * h.ivImage.getContext().getResources().getDisplayMetrics().density)))
                 .into(h.ivImage);
 
         h.itemView.setOnClickListener(v -> {

@@ -14,6 +14,8 @@ public class ProductResponse {
     private String imageUrl;
     private Integer soldCount;
     private String categoryName;
+    private Double averageRating;
+    private Integer reviewCount;
 
     // Getters
     public Integer getId() { return id; }
@@ -22,4 +24,6 @@ public class ProductResponse {
     public String getImageUrl() { return imageUrl; }
     public Integer getSoldCount() { return soldCount; }
     public String getCategoryName() { return categoryName; }
+    public Double getAverageRating() { return averageRating; }
+    public Integer getReviewCount() { return reviewCount; }
 }

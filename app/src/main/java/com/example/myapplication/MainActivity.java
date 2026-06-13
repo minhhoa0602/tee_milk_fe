@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import com.example.myapplication.ui.auth.LoginActivity;
 import com.example.myapplication.ui.cart.CartFragment;
 import com.example.myapplication.ui.home.HomeFragment;
+import com.example.myapplication.ui.menu.MenuFragment;
 import com.example.myapplication.ui.order.OrderFragment;
 import com.example.myapplication.ui.profile.ProfileFragment;
 import com.example.myapplication.utils.TokenManager;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
             if (itemId == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
+            } else if (itemId == R.id.nav_menu) {
+                selectedFragment = new MenuFragment();
             } else if (itemId == R.id.nav_order) {
                 selectedFragment = new OrderFragment();
             } else if (itemId == R.id.nav_cart) {

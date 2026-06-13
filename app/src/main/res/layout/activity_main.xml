@@ -20,8 +20,7 @@
         android:elevation="12dp"
         app:itemIconTint="@drawable/nav_item_color"
         app:itemTextColor="@drawable/nav_item_color"
-        app:itemActiveIndicatorColor="@color/nav_indicator"
-        app:itemIconSize="26dp"
+app:itemIconSize="26dp"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 

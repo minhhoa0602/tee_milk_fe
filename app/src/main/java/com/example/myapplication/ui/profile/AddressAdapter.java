@@ -23,10 +23,10 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     }
 
     public void setAddressList(List<Address> newList) {
-        if (newList == null) newList = new ArrayList<>();
+        final List<Address> finalList = newList != null ? newList : new ArrayList<>();
         DiffUtil.DiffResult diff = DiffUtil.calculateDiff(new DiffUtil.Callback() {
             final List<Address> old = addressList;
-            final List<Address> next = newList;
+            final List<Address> next = finalList;
 
             @Override public int getOldListSize() { return old.size(); }
             @Override public int getNewListSize() { return next.size(); }
@@ -47,7 +47,7 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
                 return a == null ? b == null : a.equals(b);
             }
         });
-        addressList = newList;
+        addressList = finalList;
         diff.dispatchUpdatesTo(this);
     }
 

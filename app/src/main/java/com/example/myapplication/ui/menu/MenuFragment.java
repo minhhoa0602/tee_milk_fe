@@ -61,7 +61,6 @@ public class MenuFragment extends Fragment {
     private List<CategoryResponse> categories = new ArrayList<>();
     private Integer selectedCategoryId = null; // null = Tất cả
     private Integer selectedMinRating = null;
-    private String selectedSortBy = "sold_desc";
     private boolean filterVisible = false;
 
     // Sort options
@@ -146,9 +145,7 @@ public class MenuFragment extends Fragment {
         sortAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerSort.setAdapter(sortAdapter);
         spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {
-                selectedSortBy = SORT_VALUES[pos];
-            }
+            @Override public void onItemSelected(AdapterView<?> p, View v, int pos, long id) {}
             @Override public void onNothingSelected(AdapterView<?> p) {}
         });
     }
@@ -291,45 +288,57 @@ public class MenuFragment extends Fragment {
         if (!isAdded()) return;
         tvProductCount.setText("Đang tải...");
 
-        Map<String, String> filters = new HashMap<>();
-
         String keyword = etSearch.getText().toString().trim();
-        if (!keyword.isEmpty()) filters.put("keyword", keyword);
-        if (selectedCategoryId != null) filters.put("categoryId", String.valueOf(selectedCategoryId));
-        filters.put("sortBy", selectedSortBy);
-
         String minP = etMinPrice.getText().toString().trim().replace(".", "");
         String maxP = etMaxPrice.getText().toString().trim().replace(".", "");
-        if (!minP.isEmpty()) filters.put("minPrice", minP);
-        if (!maxP.isEmpty()) filters.put("maxPrice", maxP);
-        if (selectedMinRating != null) filters.put("minRating", String.valueOf(selectedMinRating));
+        boolean hasFilter = !keyword.isEmpty() || selectedCategoryId != null
+                || !minP.isEmpty() || !maxP.isEmpty() || selectedMinRating != null
+                || spinnerSort.getSelectedItemPosition() > 0;
 
         ProductApiService api = RetrofitClient.getInstance(requireContext())
                 .create(ProductApiService.class);
-        api.searchProducts(filters).enqueue(new Callback<BaseResponse<List<ProductResponse>>>() {
-            @Override
-            public void onResponse(@NonNull Call<BaseResponse<List<ProductResponse>>> call,
-                                   @NonNull Response<BaseResponse<List<ProductResponse>>> response) {
-                if (!isAdded()) return;
-                if (response.isSuccessful() && response.body() != null
-                        && response.body().getData() != null) {
-                    List<ProductResponse> list = response.body().getData();
-                    adapter.setItems(list);
-                    tvProductCount.setText(list.size() + " sản phẩm");
-                } else {
-                    adapter.setItems(new ArrayList<>());
-                    tvProductCount.setText("0 sản phẩm");
-                }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<BaseResponse<List<ProductResponse>>> call,
-                                  @NonNull Throwable t) {
-                if (!isAdded()) return;
-                tvProductCount.setText("Lỗi tải dữ liệu");
-                Toast.makeText(getContext(), "Không thể tải sản phẩm", Toast.LENGTH_SHORT).show();
-            }
-        });
+        Callback<BaseResponse<List<ProductResponse>>> cb =
+                new Callback<BaseResponse<List<ProductResponse>>>() {
+                    @Override
+                    public void onResponse(@NonNull Call<BaseResponse<List<ProductResponse>>> call,
+                                           @NonNull Response<BaseResponse<List<ProductResponse>>> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null
+                                && response.body().getData() != null) {
+                            List<ProductResponse> list = response.body().getData();
+                            adapter.setItems(list);
+                            tvProductCount.setText(list.size() + " sản phẩm");
+                        } else {
+                            adapter.setItems(new ArrayList<>());
+                            tvProductCount.setText("0 sản phẩm");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<BaseResponse<List<ProductResponse>>> call,
+                                         @NonNull Throwable t) {
+                        if (!isAdded()) return;
+                        tvProductCount.setText("Lỗi tải dữ liệu");
+                        Toast.makeText(getContext(), "Không thể tải sản phẩm", Toast.LENGTH_SHORT).show();
+                    }
+                };
+
+        if (!hasFilter) {
+            // Không có filter → lấy tất cả sản phẩm
+            api.getAllProducts().enqueue(cb);
+        } else {
+            // Có filter → dùng search endpoint
+            Map<String, String> filters = new HashMap<>();
+            if (!keyword.isEmpty()) filters.put("keyword", keyword);
+            if (selectedCategoryId != null) filters.put("categoryId", String.valueOf(selectedCategoryId));
+            if (!minP.isEmpty()) filters.put("minPrice", minP);
+            if (!maxP.isEmpty()) filters.put("maxPrice", maxP);
+            if (selectedMinRating != null) filters.put("minRating", String.valueOf(selectedMinRating));
+            if (spinnerSort.getSelectedItemPosition() > 0)
+                filters.put("sortBy", SORT_VALUES[spinnerSort.getSelectedItemPosition()]);
+            api.searchProducts(filters).enqueue(cb);
+        }
     }
 
     private void clearFilter() {

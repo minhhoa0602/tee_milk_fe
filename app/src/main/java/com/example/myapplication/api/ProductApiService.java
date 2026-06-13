@@ -14,6 +14,10 @@ import retrofit2.http.QueryMap;
 
 public interface ProductApiService {
 
+    // GET /api/products  → tất cả sản phẩm (không lọc)
+    @GET("products")
+    Call<BaseResponse<List<ProductResponse>>> getAllProducts();
+
     // GET /api/products/best-sellers
     @GET("products/best-sellers")
     Call<BaseResponse<List<ProductResponse>>> getBestSellers();

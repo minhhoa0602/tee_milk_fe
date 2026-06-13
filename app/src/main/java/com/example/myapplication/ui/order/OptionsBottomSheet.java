@@ -137,7 +137,10 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
         tvProductName.setText(apiData.getProductName());
         this.basePrice = apiData.getBasePrice();
         tvBasePrice.setText(formatMoney(this.basePrice));
-        Glide.with(this).load(apiData.getImageUrl()).into(ivProductThumb);
+        Glide.with(this).load(apiData.getImageUrl())
+                .placeholder(android.R.drawable.ic_menu_gallery)
+                .error(android.R.drawable.ic_menu_gallery)
+                .into(ivProductThumb);
 
         // 2. Render Sizes (Tích sẵn Size cũ)
         rgSizes.removeAllViews();
@@ -212,12 +215,13 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
         tvQuantity.setText(String.valueOf(quantity));
         BigDecimal total = BigDecimal.ZERO;
 
-        total = total.add(this.basePrice);
-        if (selectedSize != null) total = total.add(selectedSize.getPriceAdd());
+        if (this.basePrice != null) total = total.add(this.basePrice);
+        if (selectedSize != null && selectedSize.getPriceAdd() != null)
+            total = total.add(selectedSize.getPriceAdd());
 
         for (Map.Entry<Integer, Topping> entry : toppingMap.entrySet()) {
             Topping t = entry.getValue();
-            if (Boolean.TRUE.equals(selectedToppings.get(t.getId()))) {
+            if (Boolean.TRUE.equals(selectedToppings.get(t.getId())) && t.getPrice() != null) {
                 total = total.add(t.getPrice());
             }
         }

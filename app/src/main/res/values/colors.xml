@@ -5,6 +5,10 @@
     <color name="milktea_bg">#F5EDE0</color>
     <color name="milktea_primary">#E8622A</color>
     <color name="milktea_text_secondary">#666666</color>
-    <color name="gray">#CCCCCC</color>    <!-- Màu xám -->
+    <color name="gray">#CCCCCC</color>
     <color name="red">#FF0000</color>
+    <color name="brand_primary">#E8622A</color>
+    <color name="brand_primary_light">#FF8C42</color>
+    <color name="nav_background">#FFFFFF</color>
+    <color name="nav_indicator">#FFDCCC</color>
 </resources>

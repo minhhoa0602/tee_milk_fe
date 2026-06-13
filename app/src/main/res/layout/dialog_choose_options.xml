@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Tên sản phẩm -->
+        <TextView
+            android:id="@+id/tvDialogProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#2C2C2C"
+            android:gravity="center"
+            android:paddingBottom="12dp" />
+
+        <!-- SIZE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kích cỡ"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#444444" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- MỨC ĐÁ -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mức đá"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#444444" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupIce"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- MỨC ĐƯỜNG -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mức đường"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#444444" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupSugar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- TOPPING -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Topping"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#444444" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupTopping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="12dp" />
+
+        <!-- SỐ LƯỢNG -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Số lượng"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#444444" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="12dp">
+
+            <Button
+                android:id="@+id/btnDecreaseQty"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="-"
+                android:textSize="18sp"
+                android:padding="0dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+            <TextView
+                android:id="@+id/tvQuantity"
+                android:layout_width="48dp"
+                android:layout_height="wrap_content"
+                android:text="1"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#2C2C2C" />
+
+            <Button
+                android:id="@+id/btnIncreaseQty"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="+"
+                android:textSize="18sp"
+                android:padding="0dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+        </LinearLayout>
+
+        <!-- TỔNG TIỀN -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tổng tiền:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#2C2C2C" />
+
+            <TextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#E65100" />
+        </LinearLayout>
+
+        <!-- NÚT CHỨC NĂNG -->
+        <Button
+            android:id="@+id/btnAddToCart"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Thêm vào giỏ hàng"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#E65100"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnBuyNow"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Mua ngay"
+            android:textColor="#E65100"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

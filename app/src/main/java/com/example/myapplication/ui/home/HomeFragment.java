@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.home;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,7 +32,10 @@ import com.example.myapplication.model.AddressResponse;
 import com.example.myapplication.model.BaseResponse;
 import com.example.myapplication.model.CategoryResponse;
 import com.example.myapplication.model.ProductResponse;
+import com.example.myapplication.ui.auth.LoginActivity;
 import com.example.myapplication.ui.detail.ProductDetailFragment;
+import com.example.myapplication.ui.order.OptionsBottomSheet;
+import com.example.myapplication.utils.TokenManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashMap;
@@ -173,8 +178,7 @@ public class HomeFragment extends Fragment {
                     }
                     @Override
                     public void onAddToCart(ProductResponse product) {
-                        Toast.makeText(getContext(),
-                                "Them " + product.getName(), Toast.LENGTH_SHORT).show();
+                        addToCartWithAuthGuard(product.getId());
                     }
                 });
         rvSearchResults.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -295,8 +299,7 @@ public class HomeFragment extends Fragment {
                     }
                     @Override
                     public void onAddToCart(ProductResponse product) {
-                        Toast.makeText(getContext(),
-                                "Them " + product.getName(), Toast.LENGTH_SHORT).show();
+                        addToCartWithAuthGuard(product.getId());
                     }
                 };
 
@@ -414,6 +417,25 @@ public class HomeFragment extends Fragment {
                 showError("Khong loc duoc san pham");
             }
         });
+    }
+
+    private void addToCartWithAuthGuard(int productId) {
+        TokenManager tokenManager = new TokenManager(requireContext());
+        if (tokenManager.getToken() == null) {
+            SharedPreferences prefs = requireContext().getSharedPreferences("PendingCart", android.app.Activity.MODE_PRIVATE);
+            prefs.edit()
+                    .putInt("sizeId", 1)
+                    .putString("iceLevel", "NORMAL")
+                    .putString("sugarLevel", "NORMAL")
+                    .putInt("quantity", 1)
+                    .apply();
+            Intent intent = new Intent(requireContext(), LoginActivity.class);
+            intent.putExtra(LoginActivity.EXTRA_PENDING_PRODUCT_ID, productId);
+            startActivity(intent);
+        } else {
+            OptionsBottomSheet bottomSheet = new OptionsBottomSheet(productId);
+            bottomSheet.show(getChildFragmentManager(), "OptionsBottomSheet");
+        }
     }
 
     private void showError(String message) {

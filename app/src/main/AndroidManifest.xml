@@ -21,12 +21,20 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.auth.LoginActivity" />
+        <activity android:name=".ui.auth.RegisterActivity" />
+        <activity android:name=".ui.auth.OtpVerifyActivity" />
+        <activity android:name=".ui.auth.ForgotPasswordActivity" />
+        <activity android:name=".ui.auth.ForgotPasswordOtpActivity" />
+        <activity android:name=".ui.auth.ResetPasswordActivity" />
         <activity android:name=".ui.payment.CheckoutActivity" />
         <activity android:name=".ui.payment.OrderSuccessActivity" />
+        <activity android:name=".ui.product.ProductDetailActivity" />
+
     </application>
 
 </manifest>

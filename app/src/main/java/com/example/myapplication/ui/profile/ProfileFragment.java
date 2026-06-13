@@ -1,18 +1,24 @@
 package com.example.myapplication.ui.profile;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -45,6 +51,7 @@ import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
+    private FrameLayout frameAvatar;
     private ImageView ivAvatar;
     private TextView tvFullName, tvEmail, tvPhone, tvEmptyAddress, tvTopProduct, tvEmptyStats;
     private RecyclerView rvAddresses;
@@ -56,6 +63,23 @@ public class ProfileFragment extends Fragment {
     private TokenManager tokenManager;
     private UserProfile currentProfile;
 
+    // Launcher chọn ảnh từ thư viện
+    private final ActivityResultLauncher<Intent> pickImageLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri imageUri = result.getData().getData();
+                    if (imageUri != null) {
+                        // Hiển thị ngay lập tức bằng Glide
+                        Glide.with(requireContext())
+                                .load(imageUri)
+                                .circleCrop()
+                                .into(ivAvatar);
+                        // Lưu URI dưới dạng string để upload
+                        uploadAvatarFromUri(imageUri);
+                    }
+                }
+            });
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
@@ -64,18 +88,19 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        ivAvatar = view.findViewById(R.id.ivAvatar);
-        tvFullName = view.findViewById(R.id.tvFullName);
-        tvEmail = view.findViewById(R.id.tvEmail);
-        tvPhone = view.findViewById(R.id.tvPhone);
-        tvEmptyAddress = view.findViewById(R.id.tvEmptyAddress);
-        tvTopProduct = view.findViewById(R.id.tvTopProduct);
-        tvEmptyStats = view.findViewById(R.id.tvEmptyStats);
-        rvAddresses = view.findViewById(R.id.rvAddresses);
+        frameAvatar     = view.findViewById(R.id.frameAvatar);
+        ivAvatar        = view.findViewById(R.id.ivAvatar);
+        tvFullName      = view.findViewById(R.id.tvFullName);
+        tvEmail         = view.findViewById(R.id.tvEmail);
+        tvPhone         = view.findViewById(R.id.tvPhone);
+        tvEmptyAddress  = view.findViewById(R.id.tvEmptyAddress);
+        tvTopProduct    = view.findViewById(R.id.tvTopProduct);
+        tvEmptyStats    = view.findViewById(R.id.tvEmptyStats);
+        rvAddresses     = view.findViewById(R.id.rvAddresses);
         layoutToppingStats = view.findViewById(R.id.layoutToppingStats);
-        btnEditProfile = view.findViewById(R.id.btnEditProfile);
-        btnAddAddress = view.findViewById(R.id.btnAddAddress);
-        btnLogout = view.findViewById(R.id.btnLogout);
+        btnEditProfile  = view.findViewById(R.id.btnEditProfile);
+        btnAddAddress   = view.findViewById(R.id.btnAddAddress);
+        btnLogout       = view.findViewById(R.id.btnLogout);
 
         rvAddresses.setLayoutManager(new LinearLayoutManager(getContext()));
         addressAdapter = new AddressAdapter(new ArrayList<>());
@@ -87,6 +112,9 @@ public class ProfileFragment extends Fragment {
         btnLogout.setOnClickListener(v -> logout());
         btnEditProfile.setOnClickListener(v -> showEditProfileDialog());
         btnAddAddress.setOnClickListener(v -> showAddAddressDialog());
+
+        // Bấm vào avatar → chọn ảnh từ thư viện
+        frameAvatar.setOnClickListener(v -> openImagePicker());
     }
 
     @Override
@@ -95,6 +123,41 @@ public class ProfileFragment extends Fragment {
         loadProfile();
         loadAddresses();
         loadOrdersAndStats();
+    }
+
+    private void openImagePicker() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        pickImageLauncher.launch(intent);
+    }
+
+    private void uploadAvatarFromUri(Uri uri) {
+        // Dùng URI làm avatarUrl tạm — trong thực tế cần upload lên cloud storage
+        // rồi lấy URL, ở đây ta dùng content URI convert thành string
+        String uriStr = uri.toString();
+        String name = currentProfile != null ? currentProfile.getFullName() : "";
+        String phone = currentProfile != null ? currentProfile.getPhoneNumber() : "";
+
+        UpdateProfileRequest request = new UpdateProfileRequest(name, phone, uriStr);
+        apiService.updateProfile(request).enqueue(new Callback<BaseResponse<UserProfile>>() {
+            @Override
+            public void onResponse(Call<BaseResponse<UserProfile>> call, Response<BaseResponse<UserProfile>> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    currentProfile = response.body().getData();
+                    Toast.makeText(getContext(), "Cập nhật ảnh đại diện thành công!", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Dù backend có lỗi, ảnh vẫn hiển thị local (Glide đã load)
+                    Toast.makeText(getContext(), "Ảnh đã cập nhật trên thiết bị", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<BaseResponse<UserProfile>> call, Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(getContext(), "Ảnh đã cập nhật trên thiết bị", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void loadProfile() {
@@ -175,8 +238,6 @@ public class ProfileFragment extends Fragment {
         }
 
         Map<String, Integer> productCount = new HashMap<>();
-        Map<String, Integer> toppingCount = new HashMap<>();
-        int totalToppings = 0;
         boolean hasCompleted = false;
 
         for (Order order : orders) {
@@ -188,7 +249,6 @@ public class ProfileFragment extends Fragment {
                         if (pName != null) {
                             productCount.put(pName, productCount.getOrDefault(pName, 0) + item.getQuantity());
                         }
-                        // Toppings không có trong OrderItemResponse hiện tại
                     }
                 }
             }
@@ -204,7 +264,6 @@ public class ProfileFragment extends Fragment {
         tvEmptyStats.setVisibility(View.GONE);
         tvTopProduct.setVisibility(View.VISIBLE);
 
-        // Tìm sản phẩm mua nhiều nhất
         String topProduct = "N/A";
         int maxP = 0;
         for (Map.Entry<String, Integer> entry : productCount.entrySet()) {
@@ -214,36 +273,7 @@ public class ProfileFragment extends Fragment {
             }
         }
         tvTopProduct.setText("Sản phẩm mua nhiều nhất: " + topProduct + " (" + maxP + " lượt)");
-
-        // Topping stats
-        layoutToppingStats.removeAllViews();
-        if (!toppingCount.isEmpty()) {
-            layoutToppingStats.setVisibility(View.VISIBLE);
-            for (Map.Entry<String, Integer> entry : toppingCount.entrySet()) {
-                double percent = (entry.getValue() * 100.0) / totalToppings;
-
-                LinearLayout row = new LinearLayout(getContext());
-                row.setOrientation(LinearLayout.HORIZONTAL);
-                row.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                row.setPadding(0, 4, 0, 4);
-
-                TextView tv = new TextView(getContext());
-                tv.setText(String.format("%s: %.0f%%", entry.getKey(), percent));
-                tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-                ProgressBar pb = new ProgressBar(getContext(), null, android.R.attr.progressBarStyleHorizontal);
-                pb.setMax(100);
-                pb.setProgress((int) percent);
-                pb.setLayoutParams(new LinearLayout.LayoutParams(0, 24, 1f));
-
-                row.addView(tv);
-                row.addView(pb);
-                layoutToppingStats.addView(row);
-            }
-        } else {
-            layoutToppingStats.setVisibility(View.GONE);
-        }
+        layoutToppingStats.setVisibility(View.GONE);
     }
 
     private void showEditProfileDialog() {
@@ -273,7 +303,8 @@ public class ProfileFragment extends Fragment {
     }
 
     private void updateProfile(String fullName, String phoneNumber) {
-        UpdateProfileRequest request = new UpdateProfileRequest(fullName, phoneNumber, currentProfile != null ? currentProfile.getAvatarUrl() : null);
+        String avatarUrl = currentProfile != null ? currentProfile.getAvatarUrl() : null;
+        UpdateProfileRequest request = new UpdateProfileRequest(fullName, phoneNumber, avatarUrl);
         apiService.updateProfile(request).enqueue(new Callback<BaseResponse<UserProfile>>() {
             @Override
             public void onResponse(Call<BaseResponse<UserProfile>> call, Response<BaseResponse<UserProfile>> response) {
@@ -321,7 +352,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void addAddress(String addressLine) {
-        AddressRequest request = new AddressRequest(addressLine, false);
+        com.example.myapplication.model.AddressRequest request = new AddressRequest(addressLine, false);
         apiService.addAddress(request).enqueue(new Callback<BaseResponse<Address>>() {
             @Override
             public void onResponse(Call<BaseResponse<Address>> call, Response<BaseResponse<Address>> response) {

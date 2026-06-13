@@ -1,20 +1,14 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
-
+// Matches backend AddressResponse DTO (camelCase)
 public class Address {
     private int id;
-    @SerializedName("user_id")
-    private int userId;
-    @SerializedName("address_line")
     private String addressLine;
-    @SerializedName("is_default")
-    private boolean isDefault;
+    private Boolean isDefault;
 
     public int getId() { return id; }
-    public int getUserId() { return userId; }
     public String getAddressLine() { return addressLine; }
-    public boolean isDefault() { return isDefault; }
+    public boolean isDefault() { return Boolean.TRUE.equals(isDefault); }
 
     public void setAddressLine(String addressLine) { this.addressLine = addressLine; }
     public void setDefault(boolean aDefault) { isDefault = aDefault; }

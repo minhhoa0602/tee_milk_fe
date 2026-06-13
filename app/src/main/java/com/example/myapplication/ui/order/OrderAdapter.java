@@ -5,17 +5,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.myapplication.R;
 import com.example.myapplication.model.Order;
 import com.example.myapplication.model.OrderItem;
+
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
 
     private List<Order> orderList;
-    private OnOrderClickListener listener;
+    private final OnOrderClickListener listener;
 
     public interface OnOrderClickListener {
         void onReorderClick(Order order);
@@ -42,23 +45,31 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orderList.get(position);
-        holder.tvOrderId.setText("Mã đơn: #" + order.getId());
-        holder.tvOrderDate.setText("Ngày đặt: " + order.getCreatedAt());
-        holder.tvOrderTotal.setText("Tổng tiền: " + String.format("%,.0f", order.getTotalAmount()) + "đ");
-        holder.tvOrderStatus.setText(mapStatus(order.getStatus()));
 
+        holder.tvOrderId.setText(order.getOrderCode() != null ? order.getOrderCode() : "N/A");
+        holder.tvOrderDate.setText(order.getOrderDate() != null ? order.getOrderDate() : "");
+        holder.tvOrderTotal.setText(String.format("%,.0fđ", order.getTotalAmount()));
+        holder.tvOrderStatus.setText(mapStatus(order.getOrderStatus()));
+
+        // Màu status
+        int color = getStatusColor(order.getOrderStatus());
+        holder.tvOrderStatus.setTextColor(color);
+
+        // Danh sách sản phẩm
         StringBuilder itemsBuilder = new StringBuilder();
         if (order.getOrderItems() != null) {
             for (OrderItem item : order.getOrderItems()) {
-                itemsBuilder.append("- ").append(item.getProductName())
-                        .append(" x").append(item.getQuantity()).append("\n");
+                itemsBuilder.append("• ").append(item.getProductName())
+                        .append(" x").append(item.getQuantity())
+                        .append(" — ").append(String.format("%,.0fđ", item.getUnitPrice()))
+                        .append("\n");
             }
         }
         holder.tvOrderItems.setText(itemsBuilder.toString().trim());
 
         holder.btnReorder.setOnClickListener(v -> listener.onReorderClick(order));
 
-        if ("COMPLETED".equals(order.getStatus())) {
+        if ("COMPLETED".equals(order.getOrderStatus())) {
             holder.btnReview.setVisibility(View.VISIBLE);
             holder.btnReview.setOnClickListener(v -> {
                 if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
@@ -82,6 +93,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         }
     }
 
+    private int getStatusColor(String status) {
+        if (status == null) return 0xFF555555;
+        switch (status) {
+            case "COMPLETED": return 0xFF2E7D32;   // xanh lá
+            case "CANCELLED": return 0xFFD32F2F;   // đỏ
+            case "SHIPPING": return 0xFF1565C0;     // xanh dương
+            default: return 0xFFF57C00;             // cam - pending/processing
+        }
+    }
+
     @Override
     public int getItemCount() {
         return orderList == null ? 0 : orderList.size();
@@ -91,7 +112,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         TextView tvOrderId, tvOrderStatus, tvOrderDate, tvOrderItems, tvOrderTotal;
         Button btnReorder, btnReview;
 
-        public OrderViewHolder(@NonNull View itemView) {
+        OrderViewHolder(@NonNull View itemView) {
             super(itemView);
             tvOrderId = itemView.findViewById(R.id.tvOrderId);
             tvOrderStatus = itemView.findViewById(R.id.tvOrderStatus);

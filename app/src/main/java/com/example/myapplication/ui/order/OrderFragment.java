@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.order;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,8 @@ import com.example.myapplication.model.BaseResponse;
 import com.example.myapplication.model.Order;
 import com.example.myapplication.model.OrderItem;
 import com.example.myapplication.model.ReviewRequest;
+import com.example.myapplication.ui.auth.LoginActivity;
+import com.example.myapplication.utils.TokenManager;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
@@ -46,6 +50,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
     private List<Order> allOrders = new ArrayList<>();
     private List<Order> filteredOrders = new ArrayList<>();
     private ApiService apiService;
+    private TokenManager tokenManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,19 +69,13 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
         orderAdapter = new OrderAdapter(filteredOrders, this);
         rvOrders.setAdapter(orderAdapter);
 
+        tokenManager = new TokenManager(requireContext());
         apiService = RetrofitClient.getInstance(requireContext()).create(ApiService.class);
 
         etSearchOrder.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                applyFilters();
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) { applyFilters(); }
+            @Override public void afterTextChanged(Editable s) {}
         });
 
         chipGroupFilter.setOnCheckedChangeListener((group, checkedId) -> applyFilters());
@@ -92,18 +91,22 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
         apiService.getOrders("ALL").enqueue(new Callback<BaseResponse<List<Order>>>() {
             @Override
             public void onResponse(Call<BaseResponse<List<Order>>> call, Response<BaseResponse<List<Order>>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful() && response.body() != null) {
                     allOrders = response.body().getData();
                     if (allOrders == null) allOrders = new ArrayList<>();
                     applyFilters();
-                } else if (response.code() == 401) {
-                    Toast.makeText(getContext(), "Phiên làm việc hết hạn", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == 401 || response.code() == 403) {
+                    goToLogin();
+                } else {
+                    Toast.makeText(getContext(), "Lỗi tải đơn hàng (HTTP " + response.code() + ")", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<List<Order>>> call, Throwable t) {
-                Toast.makeText(getContext(), "Không thể kết nối máy chủ", Toast.LENGTH_SHORT).show();
+                if (!isAdded()) return;
+                Toast.makeText(getContext(), "Không thể kết nối máy chủ. Vui lòng kiểm tra lại.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -113,41 +116,44 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
         int checkedChipId = chipGroupFilter.getCheckedChipId();
 
         filteredOrders = allOrders.stream().filter(order -> {
-            // Status filter
             boolean matchesStatus = true;
             if (checkedChipId == R.id.chipPending) {
-                matchesStatus = "PENDING".equals(order.getStatus()) || "PROCESSING".equals(order.getStatus()) || "SHIPPING".equals(order.getStatus());
+                String s = order.getOrderStatus();
+                matchesStatus = "PENDING".equals(s) || "PROCESSING".equals(s) || "SHIPPING".equals(s);
             } else if (checkedChipId == R.id.chipCompleted) {
-                matchesStatus = "COMPLETED".equals(order.getStatus());
+                matchesStatus = "COMPLETED".equals(order.getOrderStatus());
             } else if (checkedChipId == R.id.chipCancelled) {
-                matchesStatus = "CANCELLED".equals(order.getStatus());
+                matchesStatus = "CANCELLED".equals(order.getOrderStatus());
             }
 
-            // Search filter
             boolean matchesSearch = query.isEmpty() ||
-                    String.valueOf(order.getId()).contains(query) ||
-                    (order.getStatus() != null && order.getStatus().toLowerCase().contains(query)) ||
-                    (order.getOrderItems() != null && order.getOrderItems().stream().anyMatch(item -> item.getProductName().toLowerCase().contains(query)));
+                    (order.getOrderCode() != null && order.getOrderCode().toLowerCase().contains(query)) ||
+                    (order.getOrderStatus() != null && order.getOrderStatus().toLowerCase().contains(query)) ||
+                    (order.getOrderItems() != null && order.getOrderItems().stream()
+                            .anyMatch(item -> item.getProductName() != null && item.getProductName().toLowerCase().contains(query)));
 
             return matchesStatus && matchesSearch;
         }).collect(Collectors.toList());
 
         orderAdapter.setOrderList(filteredOrders);
-
-        if (filteredOrders.isEmpty()) {
-            tvEmptyOrder.setVisibility(View.VISIBLE);
-        } else {
-            tvEmptyOrder.setVisibility(View.GONE);
-        }
+        tvEmptyOrder.setVisibility(filteredOrders.isEmpty() ? View.VISIBLE : View.GONE);
     }
 
     @Override
     public void onReorderClick(Order order) {
-        apiService.reorder(order.getId()).enqueue(new Callback<BaseResponse<Void>>() {
+        int numericId = order.getNumericId();
+        if (numericId == 0) {
+            Toast.makeText(getContext(), "Không xác định được mã đơn hàng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        apiService.reorder(numericId).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
             public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Đã thêm lại đơn hàng vào giỏ hàng", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == 401 || response.code() == 403) {
+                    goToLogin();
                 } else {
                     Toast.makeText(getContext(), "Lỗi khi đặt lại đơn hàng", Toast.LENGTH_SHORT).show();
                 }
@@ -155,6 +161,7 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
 
             @Override
             public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+                if (!isAdded()) return;
                 Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
@@ -162,14 +169,14 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
 
     @Override
     public void onReviewClick(Order order, OrderItem item) {
-        showReviewDialog(order.getId(), item);
+        showReviewDialog(order.getNumericId(), item);
     }
 
     private void showReviewDialog(int orderId, OrderItem item) {
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_review, null);
         TextView tvProductName = dialogView.findViewById(R.id.tvReviewProductName);
         EditText etComment = dialogView.findViewById(R.id.etReviewComment);
-        android.widget.RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
+        RatingBar ratingBar = dialogView.findViewById(R.id.ratingBar);
 
         tvProductName.setText(item.getProductName());
 
@@ -178,7 +185,11 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
                 .setView(dialogView)
                 .setPositiveButton("Gửi", (dialog, which) -> {
                     int rating = (int) ratingBar.getRating();
-                    String comment = etComment.getText().toString();
+                    if (rating == 0) {
+                        Toast.makeText(getContext(), "Vui lòng chọn số sao đánh giá", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String comment = etComment.getText().toString().trim();
                     postReview(new ReviewRequest(orderId, item.getProductId(), rating, comment, null));
                 })
                 .setNegativeButton("Hủy", null)
@@ -189,20 +200,31 @@ public class OrderFragment extends Fragment implements OrderAdapter.OnOrderClick
         apiService.postReview(request).enqueue(new Callback<BaseResponse<Void>>() {
             @Override
             public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+                if (!isAdded()) return;
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Cảm ơn bạn đã đánh giá!", Toast.LENGTH_SHORT).show();
-                } else if (response.code() == 400 || response.code() == 409 || response.code() == 500) {
-                    // Check for duplicate or other errors
-                    Toast.makeText(getContext(), "Bạn đã đánh giá sản phẩm này rồi.", Toast.LENGTH_SHORT).show();
+                } else if (response.code() == 401 || response.code() == 403) {
+                    goToLogin();
                 } else {
-                    Toast.makeText(getContext(), "Lỗi khi gửi đánh giá", Toast.LENGTH_SHORT).show();
+                    // 400/409/500 đều có thể là đánh giá trùng
+                    Toast.makeText(getContext(), "Bạn đã đánh giá sản phẩm này rồi.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+                if (!isAdded()) return;
                 Toast.makeText(getContext(), "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void goToLogin() {
+        if (getActivity() == null) return;
+        tokenManager.clearToken();
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        getActivity().finish();
     }
 }

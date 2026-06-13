@@ -1,35 +1,31 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class Order {
-    private int id;
-    @SerializedName("user_id")
-    private int userId;
-    @SerializedName("total_amount")
+    // Backend trả orderCode dạng "#MT00000001", orderDate, orderStatus, totalAmount, orderItems
+    private String orderCode;
+    private String orderDate;
+    private String orderStatus;
     private double totalAmount;
-    @SerializedName("payment_method")
-    private String paymentMethod;
-    private String status;
-    @SerializedName("created_at")
-    private String createdAt;
-    @SerializedName("receiver_name")
-    private String receiverName;
-    @SerializedName("phone_number")
-    private String phoneNumber;
-    private String note;
-    @SerializedName("order_items")
     private List<OrderItem> orderItems;
 
-    public int getId() { return id; }
-    public int getUserId() { return userId; }
+    public String getOrderCode() { return orderCode; }
+    public String getOrderDate() { return orderDate; }
+    public String getOrderStatus() { return orderStatus; }
     public double getTotalAmount() { return totalAmount; }
-    public String getPaymentMethod() { return paymentMethod; }
-    public String getStatus() { return status; }
-    public String getCreatedAt() { return createdAt; }
-    public String getReceiverName() { return receiverName; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public String getNote() { return note; }
     public List<OrderItem> getOrderItems() { return orderItems; }
+
+    // Tiện ích: trích xuất ID số từ orderCode "#MT00000001" -> 1
+    public int getNumericId() {
+        if (orderCode == null) return 0;
+        try {
+            return Integer.parseInt(orderCode.replace("#MT", "").replaceAll("^0+", ""));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    // Alias để tương thích với code cũ dùng getStatus()
+    public String getStatus() { return orderStatus; }
 }

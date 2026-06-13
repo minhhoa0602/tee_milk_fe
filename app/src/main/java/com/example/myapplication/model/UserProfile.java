@@ -1,22 +1,21 @@
 package com.example.myapplication.model;
 
-import com.google.gson.annotations.SerializedName;
-
+// Matches backend UserProfileResponse DTO (camelCase fields)
 public class UserProfile {
     private int id;
-    private String email;
-    @SerializedName("full_name")
     private String fullName;
-    private String phone;
-    private String avatar;
+    private String email;
+    private String phoneNumber;
+    private String avatarUrl;
+    private String defaultAddress;
 
     public int getId() { return id; }
-    public String getEmail() { return email; }
     public String getFullName() { return fullName; }
-    public String getPhone() { return phone; }
-    public String getAvatar() { return avatar; }
+    public String getEmail() { return email; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getAvatarUrl() { return avatarUrl; }
+    public String getDefaultAddress() { return defaultAddress; }
 
-    public void setFullName(String fullName) { this.fullName = fullName; }
-    public void setPhone(String phone) { this.phone = phone; }
-    public void setAvatar(String avatar) { this.avatar = avatar; }
+    // Alias để tương thích với code cũ dùng getPhone()
+    public String getPhone() { return phoneNumber; }
 }

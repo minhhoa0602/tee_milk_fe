@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="#FFFFFF">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivProduct"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/RoundedImageView"
+        android:src="@android:drawable/ic_menu_gallery"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tên Món..."
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:textColor="#4E342E"/>
+
+        <TextView
+            android:id="@+id/tvQty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="x1"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:textColor="#000000"/>
+
+        <TextView
+            android:id="@+id/tvDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Size L | Đá 50% | Đường 70%"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:layout_below="@id/tvName"
+            android:layout_marginTop="4dp"/>
+
+        <TextView
+            android:id="@+id/tvToppings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Topping: Trân châu đen"
+            android:textSize="12sp"
+            android:textColor="#666666"
+            android:layout_below="@id/tvDetails"/>
+
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0đ"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:textSize="15sp"
+            android:layout_below="@id/tvToppings"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"/>
+    </RelativeLayout>
+</LinearLayout>

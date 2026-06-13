@@ -19,7 +19,7 @@ public class TokenManager {
         //return prefs.getString("USER_TOKEN", null);
 
         // Copy nguyên chuỗi eyJhbGci... dán vào trong dấu ngoặc kép này
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjdXN0b21lckBlbWFpbC5jb20iLCJpZCI6NX0...";
+        return "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJob2FtaW5odnUwMDFAZ21haWwuY29tIiwiaWF0IjoxNzgxMjUwNTQwLCJleHAiOjE3ODEzMzY5NDB9.qE5YId13_NEUvMk_8aO3wG0U84BfzPXM6bl106IMQG0";
     }
 
     public void clearToken() {

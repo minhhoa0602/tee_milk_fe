@@ -309,9 +309,9 @@ public class ProductDetailActivity extends AppCompatActivity {
     }
 
     private void addToCart(CartRequest req, boolean buyNow, AlertDialog dialog) {
-        apiService.addToCart(req).enqueue(new Callback<BaseResponse<Void>>() {
+        apiService.addToCart(req).enqueue(new Callback<BaseResponse<String>>() {
             @Override
-            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+            public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
                 if (response.isSuccessful()) {
                     dialog.dismiss();
                     if (buyNow) {

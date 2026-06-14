@@ -79,5 +79,5 @@ public interface ApiService {
     Call<BaseResponse<ProductOptions>> getProductOptions(@Path("id") int productId);
 
     @POST("cart/add")
-    Call<BaseResponse<Void>> addToCart(@Body CartRequest request);
+    Call<BaseResponse<String>> addToCart(@Body CartRequest request);
 }

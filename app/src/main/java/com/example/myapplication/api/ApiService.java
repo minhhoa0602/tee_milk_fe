@@ -40,7 +40,7 @@ public interface ApiService {
     Call<BaseResponse<Object>> verifyOtp(@Body VerifyRequest request);
 
     @POST("auth/forgot-password")
-    Call<BaseResponse<Void>> forgotPassword(@Body ForgotPasswordRequest request);
+    Call<BaseResponse<String>> forgotPassword(@Body ForgotPasswordRequest request);
 
     @POST("auth/forgot-password/verify")
     Call<BaseResponse<String>> verifyForgotPasswordOtp(@Body ForgotPasswordVerifyRequest request);

@@ -62,6 +62,7 @@ public class ForgotPasswordOtpActivity extends AppCompatActivity {
                             String resetToken = response.body().getData();
                             Intent intent = new Intent(ForgotPasswordOtpActivity.this, ResetPasswordActivity.class);
                             intent.putExtra(ResetPasswordActivity.EXTRA_TOKEN, resetToken != null ? resetToken : "");
+                            intent.putExtra(ResetPasswordActivity.EXTRA_EMAIL, email);
                             startActivity(intent);
                             finish();
                         } else {

@@ -21,10 +21,12 @@ import retrofit2.Response;
 public class ResetPasswordActivity extends AppCompatActivity {
 
     public static final String EXTRA_TOKEN = "RESET_TOKEN";
+    public static final String EXTRA_EMAIL = "EMAIL";
 
     private EditText etNewPassword, etConfirmPassword;
     private Button btnReset;
     private String resetToken;
+    private String email;
     private ApiService apiService;
 
     @Override
@@ -33,6 +35,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_reset_password);
 
         resetToken = getIntent().getStringExtra(EXTRA_TOKEN);
+        email = getIntent().getStringExtra(EXTRA_EMAIL);
 
         etNewPassword = findViewById(R.id.etNewPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
@@ -57,7 +60,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        apiService.resetPassword(new ResetPasswordWithTokenRequest(resetToken, newPassword, confirmPassword))
+        apiService.resetPassword(new ResetPasswordWithTokenRequest(email,resetToken, newPassword))
                 .enqueue(new Callback<BaseResponse<Void>>() {
                     @Override
                     public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {

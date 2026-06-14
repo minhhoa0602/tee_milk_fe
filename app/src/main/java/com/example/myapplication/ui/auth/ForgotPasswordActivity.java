@@ -48,9 +48,9 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             return;
         }
 
-        apiService.forgotPassword(new ForgotPasswordRequest(email)).enqueue(new Callback<BaseResponse<Void>>() {
+        apiService.forgotPassword(new ForgotPasswordRequest(email)).enqueue(new Callback<BaseResponse<String>>() {
             @Override
-            public void onResponse(Call<BaseResponse<Void>> call, Response<BaseResponse<Void>> response) {
+            public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(ForgotPasswordActivity.this, "Đã gửi OTP về email", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ForgotPasswordActivity.this, ForgotPasswordOtpActivity.class);
@@ -64,7 +64,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
                 Toast.makeText(ForgotPasswordActivity.this, "Lỗi kết nối: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

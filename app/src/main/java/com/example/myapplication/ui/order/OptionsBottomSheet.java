@@ -129,7 +129,7 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
             }
             @Override
             public void onFailure(Call<BaseResponse<ProductOptionsResponse>> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi tải dữ liệu mạng", Toast.LENGTH_SHORT).show();
+                showToast("Lỗi tải dữ liệu mạng");
             }
         });
     }
@@ -244,7 +244,7 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
         // Validate: có sizes nhưng chưa chọn
         if (selectedSize == null && apiData != null
                 && apiData.getSizes() != null && !apiData.getSizes().isEmpty()) {
-            Toast.makeText(getContext(), "Vui lòng chọn kích thước", Toast.LENGTH_SHORT).show();
+            showToast("Vui lòng chọn kích thước");
             return;
         }
 
@@ -266,7 +266,7 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
                 @Override
                 public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
                     if(response.isSuccessful()) {
-                        Toast.makeText(getContext(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                        showToast("Cập nhật thành công!");
                         if(updateListener != null) updateListener.onCartUpdated(); // Báo cho Fragment biết để load lại
                         dismiss();
                     }
@@ -280,13 +280,13 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
             @Override
             public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
                 if(response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Thêm giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+                    showToast("Thêm giỏ hàng thành công!");
                     dismiss();
                 }
             }
             @Override
             public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
-                Toast.makeText(getContext(), "Lỗi mạng", Toast.LENGTH_SHORT).show();
+                showToast("Lỗi mạng");
             }
         });
         }
@@ -306,15 +306,23 @@ public class OptionsBottomSheet extends BottomSheetDialogFragment {
 //            @Override
 //            public void onResponse(Call<BaseResponse<String>> call, Response<BaseResponse<String>> response) {
 //                if(response.isSuccessful()) {
-//                    Toast.makeText(getContext(), "Thêm giỏ hàng thành công!", Toast.LENGTH_SHORT).show();
+//                    showToast("Thêm giỏ hàng thành công!");
 //                    dismiss();
 //                }
 //            }
 //            @Override
 //            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
-//                Toast.makeText(getContext(), "Lỗi mạng", Toast.LENGTH_SHORT).show();
+//                showToast("Lỗi mạng");
 //            }
 //        });
+    }
+
+    private android.widget.Toast currentToast;
+
+    private void showToast(String msg) {
+        if (currentToast != null) currentToast.cancel();
+        currentToast = Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT);
+        currentToast.show();
     }
 
     private String formatMoney(BigDecimal amount) {

@@ -182,6 +182,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         tvDialogName.setText(currentProduct.getName());
 
         // --- SIZE chips ---
+        cgSize.setSingleSelection(true);
         List<SizeOption> sizes = options.getSizes();
         if (sizes != null) {
             for (SizeOption s : sizes) {
@@ -194,9 +195,11 @@ public class ProductDetailActivity extends AppCompatActivity {
         }
 
         // --- ICE chips ---
+        cgIce.setSingleSelection(true);
         addLevelChips(cgIce, options.getIceLevels(), new String[]{"Không đá", "Ít đá", "Bình thường"});
 
         // --- SUGAR chips ---
+        cgSugar.setSingleSelection(true);
         addLevelChips(cgSugar, options.getSugarLevels(), new String[]{"Không đường", "Ít đường", "Bình thường"});
 
         // --- TOPPING chips (multi-select) ---

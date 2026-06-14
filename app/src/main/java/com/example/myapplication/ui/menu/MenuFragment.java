@@ -70,6 +70,15 @@ public class MenuFragment extends Fragment {
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
 
+    // Toast duy nhất, cancel cái cũ trước khi show cái mới
+    private Toast currentToast;
+
+    private void showToast(String msg) {
+        if (currentToast != null) currentToast.cancel();
+        currentToast = Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT);
+        currentToast.show();
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -353,7 +362,7 @@ public class MenuFragment extends Fragment {
                                   @NonNull Throwable t) {
                 if (!isAdded()) return;
                 tvProductCount.setText("Lỗi tải dữ liệu");
-                Toast.makeText(getContext(), "Không thể tải sản phẩm", Toast.LENGTH_SHORT).show();
+                showToast("Không thể tải sản phẩm");
             }
         });
     }

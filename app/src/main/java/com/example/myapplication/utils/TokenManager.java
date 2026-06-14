@@ -3,6 +3,8 @@ package com.example.myapplication.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.myapplication.api.RetrofitClient;
+
 public class TokenManager {
     private SharedPreferences prefs;
 
@@ -15,14 +17,11 @@ public class TokenManager {
     }
 
     public String getToken() {
-
-        //return prefs.getString("USER_TOKEN", null);
-
-        // Copy nguyên chuỗi eyJhbGci... dán vào trong dấu ngoặc kép này
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjdXN0b21lckBlbWFpbC5jb20iLCJpZCI6NX0...";
+        return prefs.getString("USER_TOKEN", null);
     }
 
     public void clearToken() {
         prefs.edit().remove("USER_TOKEN").apply();
+        RetrofitClient.reset();
     }
 }

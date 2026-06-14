@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Địa chỉ giao hàng"
+        android:textSize="14sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etAddressLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPostalAddress|textMultiLine"
+        android:hint="VD: 123 Nguyễn Trãi, P. Bến Thành, Q.1, TP.HCM"
+        android:minLines="2"
+        android:padding="10dp"
+        android:gravity="top" />
+
+</LinearLayout>

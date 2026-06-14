@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="#FAF8F5">
+
+    <ImageView
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@android:drawable/ic_dialog_info"
+        android:tint="#6D4C41"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/tvSuccessTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Trạng thái đơn hàng"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#6D4C41"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/tvSuccessMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đang tải dữ liệu..."
+        android:textAlignment="center"
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"/>
+
+    <LinearLayout
+        android:id="@+id/layoutQrCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/bg_bottom_sheet_white"
+        android:padding="16dp"
+        android:elevation="2dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/ivQrCode"
+            android:layout_width="260dp"
+            android:layout_height="260dp"
+            android:scaleType="fitCenter"
+            android:background="#F5F5F5"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đang chờ nhận tiền..."
+            android:textColor="#D82D8B"
+            android:textStyle="italic"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
+
+    <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/btnBackHome"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="Về trang chủ"
+        android:backgroundTint="#6D4C41"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+</LinearLayout>

@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:usesCleartextTraffic="true"
@@ -21,10 +24,20 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.auth.LoginActivity" android:exported="false" />
+        <activity android:name=".ui.auth.RegisterActivity" android:exported="false" />
+        <activity android:name=".ui.auth.OtpVerifyActivity" android:exported="false" />
+        <activity android:name=".ui.auth.ForgotPasswordActivity" android:exported="false" />
+        <activity android:name=".ui.auth.ForgotPasswordOtpActivity" android:exported="false" />
+        <activity android:name=".ui.auth.ResetPasswordActivity" android:exported="false" />
+        <activity android:name=".ui.payment.CheckoutActivity" android:exported="false" />
+        <activity android:name=".ui.payment.OrderSuccessActivity" android:exported="false" />
+        <activity android:name=".ui.product.ProductDetailActivity" android:exported="false" />
+
     </application>
 
 </manifest>

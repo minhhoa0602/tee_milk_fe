@@ -34,10 +34,10 @@ public interface ApiService {
     Call<BaseResponse<LoginResponse>> login(@Body LoginRequest request);
 
     @POST("auth/register")
-    Call<BaseResponse<Void>> register(@Body RegisterRequest request);
+    Call<BaseResponse<Object>> register(@Body RegisterRequest request);
 
     @POST("auth/verify")
-    Call<BaseResponse<Void>> verifyOtp(@Body VerifyRequest request);
+    Call<BaseResponse<Object>> verifyOtp(@Body VerifyRequest request);
 
     @POST("auth/forgot-password")
     Call<BaseResponse<Void>> forgotPassword(@Body ForgotPasswordRequest request);

@@ -329,7 +329,7 @@ public class ProductDetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<Void>> call, Throwable t) {
+            public void onFailure(Call<BaseResponse<String>> call, Throwable t) {
                 Toast.makeText(ProductDetailActivity.this, "Lỗi kết nối", Toast.LENGTH_SHORT).show();
             }
         });
